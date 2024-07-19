@@ -507,6 +507,12 @@ input[type="reset"] {
   @include width(100px);
 }
 
+//max-width
+
+.max-w-90vw{
+  max-width: 90vw;
+}
+
 //height
 
 @mixin height($size) {
@@ -575,6 +581,10 @@ input[type="reset"] {
 
 .overflow-visible {
   overflow: visible !important;
+}
+
+.overflow-scroll {
+  overflow: scroll !important;
 }
 
 .scroll-y{

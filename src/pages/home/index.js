@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, Fragment } from "react"
 
 import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
 
+import Header from "components/Header"
 import ToastMessage from "components/ToastMessage"
 
 import useToast from "custom-hooks/useToast"
@@ -20,10 +21,28 @@ import Style from "./style.module.scss"
 
 const Home = () => {
   const Device = useDevice()
-
   const [toast, setToast] = useToast()
+
   const [departure, setDeparture] = useState("Any")
   const [arrival, setArrival] = useState("Any")
+  const [page, setPage] = useState(0)
+  const [data, setData] = useState([
+    // {
+    //   Airlines: "Turkish",
+    //   "Cabin Baggage Included in price": "7kg",
+    //   "Check in Baggage included in price": "40kg",
+    //   "Email Address": "saurabveersingh@gmail.com",
+    //   "Flight Arrival Airport": "Dublin",
+    //   "Flight Arrival Date and Time": "2024-08-12T15:54:59.999",
+    //   "Flight Departure Airport": "Delhi",
+    //   "Flight Departure Date and Time": "2024-08-12T06:35:00.000",
+    //   "Flight duration Including layovers": "13-14 hrs",
+    //   Name: "Saurab",
+    //   "Phone number": "+91 9988301036",
+    //   Price: 50000,
+    //   Timestamp: "2024-07-19T11:24:45.732",
+    // },
+  ])
 
   const departureOptions = [
     "Any",
@@ -44,54 +63,128 @@ const Home = () => {
 
   const arrivalOptions = ["Any", "Dublin", "Shannon", "Cork", "Knock"]
 
+  const showResults = () => {
+    let d = []
+    setPage(1)
+    fetch("https://sheet.best/api/sheets/080a7384-a343-4ca3-85d9-2f8735f43461?_raw=1")
+      .then((response) => response.json())
+      .then((res) => {
+        setData(res.filter(filterDeparture).filter(filterArrival).sort(sortByDate))
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  const filterDeparture = (item) => {
+    if (departure === "Any") return item
+    console.log(item["Flight Departure Airport"], departure)
+    return item["Flight Departure Airport"] === departure
+  }
+
+  const filterArrival = (item) => {
+    if (arrival === "Any") return item
+    return item["Flight Arrival Airport"] === arrival
+  }
+
+  const sortByDate = (a, b) => {
+    return new Date(a["Flight Departure Date and Time"]) < new Date(b["Flight Departure Date and Time"]) ? -1 : 1
+  }
+
   return (
-    <div className={`mt-3`}>
-      <ToastMessage {...toast} setToast={setToast} />
+    <Fragment>
+      {page === 0 && <Header />}
+      <div className={`mt-3`}>
+        <ToastMessage {...toast} setToast={setToast} />
 
-      <div className={`${Style.content_holder} p-4 bg-white br-8px`}>
-        <div className={`${Device.isMobile ? "" : `d-flex justify-content-center`}`}>
-          <div className={`d-flex ${Device.isMobile ? "mt-4 justify-content-between" : `me-4`}`}>
-            <p className={`pt-1 pe-2`}>Departure Airport: </p>
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-departure" className="bg-6E4942 border-0">
-                {departure}
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="scroll-y h-20vh">
-                {departureOptions.map((item, index) => {
+        {page === 0 ? (
+          <div className={`${Style.content_holder} p-4 bg-white br-8px`}>
+            <div className={`${Device.isMobile ? "" : `d-flex justify-content-center`}`}>
+              <div className={`d-flex ${Device.isMobile ? "mt-4 justify-content-between" : `me-4`}`}>
+                <p className={`pt-1 pe-2`}>Departure Airport: </p>
+                <Dropdown>
+                  <Dropdown.Toggle id="dropdown-departure" className="bg-6E4942 border-0">
+                    {departure}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="scroll-y h-20vh">
+                    {departureOptions.map((item, index) => {
+                      return (
+                        <Dropdown.Item key={index} onClick={() => setDeparture(item)}>
+                          {item}
+                        </Dropdown.Item>
+                      )
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+
+              <div className={`d-flex ${Device.isMobile ? "mt-4 justify-content-between" : ``}`}>
+                <p className={`pt-1 pe-2`}>Arrival Airport: </p>
+                <Dropdown>
+                  <Dropdown.Toggle id="dropdown-arrival" className="bg-6E4942 border-0">
+                    {arrival}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="scroll-y h-20vh">
+                    {arrivalOptions.map((item, index) => {
+                      return (
+                        <Dropdown.Item key={index} onClick={() => setArrival(item)}>
+                          {item}
+                        </Dropdown.Item>
+                      )
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-center mt-4">
+              <Button className="bg-6E4942 border-0" onClick={showResults}>
+                Go
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-90vw overflow-scroll">
+            <table className={`text-center ${Style.table}`}>
+              <thead>
+                <tr className={`bg-6E4942 text-white ${Style.header_row}`}>
+                  {departure === "Any" && <th>Departure</th>}
+                  {arrival === "Any" && <th>Arrival</th>}
+                  <th>Departure Date & Time</th>
+                  <th>Arrival Date & Time</th>
+                  <th>Duration</th>
+                  <th>Cost</th>
+                  <th>Baggage</th>
+                  <th>Airlines</th>
+                  <th>Name</th>
+                  <th>Phone Number</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, index) => {
+                  let d = new Date(item["Flight Departure Date and Time"])
+                  let a = new Date(item["Flight Arrival Date and Time"])
                   return (
-                    <Dropdown.Item key={index} onClick={() => setDeparture(item)}>
-                      {item}
-                    </Dropdown.Item>
+                    <tr key={index} className={`bg-white ${Style.rows}`}>
+                      {departure === "Any" && <td>{item["Flight Departure Airport"]}</td>}
+                      {arrival === "Any" && <td>{item["Flight Arrival Airport"]}</td>}
+                      <td>{a.toLocaleString()}</td>
+                      <td>{a.toLocaleString()}</td>
+                      <td>{item["Flight duration Including layovers"]}</td>
+                      <td>{item["Price"]}</td>
+                      <td>{item["Check in Baggage included in price"] + " + " + item["Cabin Baggage Included in price"]}</td>
+                      <td>{item["Airlines"]}</td>
+                      <td>{item["Name"]}</td>
+                      <td>{item["Phone number"]}</td>
+                    </tr>
                   )
                 })}
-              </Dropdown.Menu>
-            </Dropdown>
+              </tbody>
+            </table>
           </div>
-
-          <div className={`d-flex ${Device.isMobile ? "mt-4 justify-content-between" : ``}`}>
-            <p className={`pt-1 pe-2`}>Arrival Airport: </p>
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-arrival" className="bg-6E4942 border-0">
-                {arrival}
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="scroll-y h-20vh">
-                {arrivalOptions.map((item, index) => {
-                  return (
-                    <Dropdown.Item key={index} onClick={() => setArrival(item)}>
-                      {item}
-                    </Dropdown.Item>
-                  )
-                })}
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        </div>
-
-        <div className="d-flex justify-content-center mt-4">
-          <Button className="bg-6E4942 border-0">Go</Button>
-        </div>
+        )}
       </div>
-    </div>
+    </Fragment>
   )
 }
 
