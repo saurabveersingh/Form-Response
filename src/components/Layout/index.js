@@ -15,11 +15,11 @@ import Footer from "../Footer"
 
 const Layout = (props) => {
   return (
-    <Fragment>
+    <div className={`d-flex align-items-center flex-column min-h-100vh bg-D4C8C6`}>
       <Header />
       <main>{props.children}</main>
       <Footer />
-    </Fragment>
+    </div>
   )
 }
 

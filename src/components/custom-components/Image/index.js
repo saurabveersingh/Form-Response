@@ -1,7 +1,7 @@
 import React, { useContext } from "react"
 import PropTypes from "prop-types"
 
-import { DeviceContext } from "../../../stores/global/DeviceStore"
+import useDevice from "custom-hooks/useDevice"
 
 /**
  * Component to show image.
@@ -20,7 +20,7 @@ import { DeviceContext } from "../../../stores/global/DeviceStore"
  */
 
 const Image = (props) => {
-  const Device = useContext(DeviceContext)
+  const Device = useDevice()
   let imgProps = {
     src: props.src,
     alt: props.alt,
@@ -44,7 +44,7 @@ const Image = (props) => {
 
 Image.propTypes = {
   src: PropTypes.string.isRequired,
-  alt: PropTypes.string,
+  alt: PropTypes.string.isRequired,
   className: PropTypes.string,
   style: PropTypes.object,
   title: PropTypes.string,

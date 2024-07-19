@@ -294,6 +294,18 @@ input[type="reset"] {
   }
 }
 
+//margin
+
+.mt-12px{
+  margin-top: 12px !important;
+}
+
+@media screen and (min-width: 2500px) {
+  .mt-24px{
+    margin-top: 12px !important;
+  }
+}
+
 //box-shadow
 
 .bs-1 {
@@ -306,8 +318,12 @@ input[type="reset"] {
   background: $color !important;
 }
 
-.bg-darkcyan {
-  @include bg(darkcyan);
+.bg-D4C8C6{
+  @include bg(#D4C8C6)
+}
+
+.bg-6E4942 {
+  @include bg(#6E4942);
 }
 
 .bg-transparent {
@@ -462,8 +478,8 @@ input[type="reset"] {
   border-radius: 0px !important;
 }
 
-.br-10px {
-  @include br(10px);
+.br-8px {
+  @include br(8px);
 }
 
 //width
@@ -516,6 +532,10 @@ input[type="reset"] {
   height: 50vh !important;
 }
 
+.h-20vh {
+  height: 20vh !important;
+}
+
 .h-100px {
   @include height(100px);
 }
@@ -555,6 +575,10 @@ input[type="reset"] {
 
 .overflow-visible {
   overflow: visible !important;
+}
+
+.scroll-y{
+  overflow-y: scroll !important;
 }
 
 .nowrap {

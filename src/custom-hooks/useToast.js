@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react"
 
+// !definition of component
+/**
+ *
+ * @description --> Used to manage toasts.
+ * @returns a toast value and set value method.
+ */
+// ! component
+
 const useToast = () => {
   const [toast, setToast] = useState({})
 
