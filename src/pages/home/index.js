@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect, useRef } from "react"
+import { useState, Fragment, useRef } from "react"
 
 import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
@@ -153,7 +153,7 @@ const Home = () => {
             </div>
           </div>
         ) : (
-          <div className="max-w-90vw overflow-scroll">
+          <div className="max-w-90vw max-h-60vh overflow-scroll">
             <table className={`text-center ${Style.table}`}>
               <thead>
                 <tr className={`bg-6E4942 text-white ${Style.header_row}`}>
