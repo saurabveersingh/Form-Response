@@ -1,7 +1,8 @@
-import { useState, Fragment } from "react"
+import { useState, Fragment, useEffect, useRef } from "react"
 
 import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
+import ReCAPTCHA from "react-google-recaptcha"
 
 import Header from "components/Header"
 import ToastMessage from "components/ToastMessage"
@@ -63,8 +64,14 @@ const Home = () => {
 
   const arrivalOptions = ["Any", "Dublin", "Shannon", "Cork", "Knock"]
 
+  const captcha = useRef()
+
   const showResults = () => {
-    let d = []
+    const captchaValue = captcha.current.getValue()
+    if (!captchaValue) {
+      setToast({ type: "error", message: "Please verify Captcha" })
+      return
+    }
     setPage(1)
     fetch("https://sheet.best/api/sheets/080a7384-a343-4ca3-85d9-2f8735f43461?_raw=1")
       .then((response) => response.json())
@@ -98,7 +105,7 @@ const Home = () => {
         <ToastMessage {...toast} setToast={setToast} />
 
         {page === 0 ? (
-          <div className={`${Style.content_holder} p-4 bg-white br-8px`}>
+          <div className={`${Style.content_holder} p-4 bg-white br-8px d-flex flex-column align-items-center`}>
             <div className={`${Device.isMobile ? "" : `d-flex justify-content-center`}`}>
               <div className={`d-flex ${Device.isMobile ? "mt-4 justify-content-between" : `me-4`}`}>
                 <p className={`pt-1 pe-2`}>Departure Airport: </p>
@@ -118,7 +125,7 @@ const Home = () => {
                 </Dropdown>
               </div>
 
-              <div className={`d-flex ${Device.isMobile ? "mt-4 justify-content-between" : ``}`}>
+              <div className={`d-flex mb-4 ${Device.isMobile ? "mt-4 justify-content-between" : ``}`}>
                 <p className={`pt-1 pe-2`}>Arrival Airport: </p>
                 <Dropdown>
                   <Dropdown.Toggle id="dropdown-arrival" className="bg-6E4942 border-0">
@@ -136,6 +143,8 @@ const Home = () => {
                 </Dropdown>
               </div>
             </div>
+
+            <ReCAPTCHA sitekey="6LdLXRQqAAAAAPpvAPYy3SqdfeZvS8XmiGpKjePu" ref={captcha} />
 
             <div className="d-flex justify-content-center mt-4">
               <Button className="bg-6E4942 border-0" onClick={showResults}>
