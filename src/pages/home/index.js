@@ -177,8 +177,8 @@ const Home = () => {
                     <tr key={index} className={`bg-white ${Style.rows}`}>
                       {departure === "Any" && <td>{item["Flight Departure Airport"]}</td>}
                       {arrival === "Any" && <td>{item["Flight Arrival Airport"]}</td>}
-                      <td>{a.toLocaleString()}</td>
-                      <td>{a.toLocaleString()}</td>
+                      <td>{d.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</td>
+                      <td>{a.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</td>
                       <td>{item["Flight duration Including layovers"]}</td>
                       <td>{item["Price"]}</td>
                       <td>{item["Check in Baggage included in price"] + " + " + item["Cabin Baggage Included in price"]}</td>
