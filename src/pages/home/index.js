@@ -2,6 +2,7 @@ import { useState, Fragment, useRef } from "react"
 
 import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
+import Spinner from "react-bootstrap/Spinner"
 import ReCAPTCHA from "react-google-recaptcha"
 
 import Header from "components/Header"
@@ -27,6 +28,7 @@ const Home = () => {
   const [departure, setDeparture] = useState("Any")
   const [arrival, setArrival] = useState("Any")
   const [page, setPage] = useState(0)
+  const [loader, setLoader] = useState(true)
   const [data, setData] = useState([
     // {
     //   Airlines: "Turkish",
@@ -73,10 +75,11 @@ const Home = () => {
       return
     }
     setPage(1)
-    fetch("https://sheet.best/api/sheets/080a7384-a343-4ca3-85d9-2f8735f43461?_raw=1")
+    fetch("https://api.sheetapi.rest/api/v1/sheet/WjTR7T443FMTR5WuCozvU")
       .then((response) => response.json())
       .then((res) => {
         setData(res.filter(filterDeparture).filter(filterArrival).sort(sortByDate))
+        setLoader(false)
       })
       .catch((error) => {
         console.error(error)
@@ -154,42 +157,48 @@ const Home = () => {
           </div>
         ) : (
           <div className="max-w-90vw max-h-60vh overflow-scroll">
-            <table className={`text-center ${Style.table}`}>
-              <thead>
-                <tr className={`bg-6E4942 text-white ${Style.header_row}`}>
-                  {departure === "Any" && <th>Departure</th>}
-                  {arrival === "Any" && <th>Arrival</th>}
-                  <th>Departure Date & Time</th>
-                  <th>Arrival Date & Time</th>
-                  <th>Duration</th>
-                  <th>Cost</th>
-                  <th>Baggage</th>
-                  <th>Airlines</th>
-                  <th>Name</th>
-                  <th>Phone Number</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((item, index) => {
-                  let d = new Date(item["Flight Departure Date and Time"])
-                  let a = new Date(item["Flight Arrival Date and Time"])
-                  return (
-                    <tr key={index} className={`bg-white ${Style.rows}`}>
-                      {departure === "Any" && <td>{item["Flight Departure Airport"]}</td>}
-                      {arrival === "Any" && <td>{item["Flight Arrival Airport"]}</td>}
-                      <td>{d.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</td>
-                      <td>{a.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</td>
-                      <td>{item["Flight duration Including layovers"]}</td>
-                      <td>{item["Price"]}</td>
-                      <td>{item["Check in Baggage included in price"] + " + " + item["Cabin Baggage Included in price"]}</td>
-                      <td>{item["Airlines"]}</td>
-                      <td>{item["Name"]}</td>
-                      <td>{item["Phone number"]}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            {loader ? (
+              <div className="d-flex align-items-center justify-content-center h-50vh">
+                <Spinner />
+              </div>
+            ) : (
+              <table className={`text-center ${Style.table}`}>
+                <thead>
+                  <tr className={`bg-6E4942 text-white ${Style.header_row}`}>
+                    {departure === "Any" && <th>Departure</th>}
+                    {arrival === "Any" && <th>Arrival</th>}
+                    <th>Departure Date & Time</th>
+                    <th>Arrival Date & Time</th>
+                    <th>Duration</th>
+                    <th>Cost</th>
+                    <th>Baggage</th>
+                    <th>Airlines</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, index) => {
+                    let d = new Date(item["Flight Departure Date and Time"])
+                    let a = new Date(item["Flight Arrival Date and Time"])
+                    return (
+                      <tr key={index} className={`bg-white ${Style.rows}`}>
+                        {departure === "Any" && <td>{item["Flight Departure Airport"]}</td>}
+                        {arrival === "Any" && <td>{item["Flight Arrival Airport"]}</td>}
+                        <td>{d.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</td>
+                        <td>{a.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</td>
+                        <td>{item["Flight duration Including layovers"]}</td>
+                        <td>{item["Price"]}</td>
+                        <td>{item["Check in Baggage included in price"] + " + " + item["Cabin Baggage Included in price"]}</td>
+                        <td>{item["Airlines"]}</td>
+                        <td>{item["Name"]}</td>
+                        <td>{item["Phone number"]}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
       </div>
