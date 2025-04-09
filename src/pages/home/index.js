@@ -74,9 +74,17 @@ const Home = () => {
       setToast({ type: "error", message: "Please verify Captcha" })
       return
     }
+
     setPage(1)
-    fetch("https://api.sheetapi.rest/api/v1/sheet/WjTR7T443FMTR5WuCozvU")
-      .then((response) => response.json())
+
+    fetch("https://script.google.com/macros/s/AKfycbxn3YAxqPqzxteqL1uAABD1AiMUtq4668ekmAHUbfGmtzuTYPZZ9GEPw3F7OL77tus/exec", {
+      redirect: "follow",
+      method: "GET",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+    })
+      .then((res) => res.json())
       .then((res) => {
         setData(res.filter(filterDeparture).filter(filterArrival).sort(sortByDate))
         setLoader(false)
