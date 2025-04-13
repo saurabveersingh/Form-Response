@@ -164,7 +164,7 @@ const Home = () => {
             </div>
           </div>
         ) : (
-          <div className="max-w-90vw max-h-60vh overflow-scroll">
+          <div className={`max-w-90vw ${Device.isMobile ? "max-h-60vh" : "max-h-70vh"} overflow-scroll`}>
             {loader ? (
               <div className="d-flex align-items-center justify-content-center h-50vh">
                 <Spinner />
